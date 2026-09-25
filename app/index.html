@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1" />
+  <title>PCP Digital</title>
+  <meta name="theme-color" content="#0F1720" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="apple-touch-icon" href="icons/icon-192.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <!-- ===================== TOPO / NAVEGAÇÃO ===================== -->
+  <header class="app-header" id="app-header" hidden>
+    <span class="app-header__title" id="screen-title">PCP Digital</span>
+    <button class="icon-btn" id="btn-logout" title="Sair">Sair</button>
+  </header>
+
+  <main id="app-root">
+
+    <!-- ===================== TELA: LOGIN ===================== -->
+    <section class="screen" id="screen-login">
+      <div class="login-card">
+        <h1 class="brand">PCP Digital</h1>
+        <p class="brand-sub">Coleta de Ordens de Produção</p>
+        <form id="form-login">
+          <label class="field">
+            <span>E-mail</span>
+            <input type="email" id="login-email" autocomplete="username" required />
+          </label>
+          <label class="field">
+            <span>Senha</span>
+            <input type="password" id="login-password" autocomplete="current-password" required />
+          </label>
+          <p class="form-error" id="login-error" hidden></p>
+          <button type="submit" class="btn btn--primary btn--block">Entrar</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- ===================== TELA: HOME ===================== -->
+    <section class="screen" id="screen-home" hidden>
+      <div class="home-grid">
+        <button class="home-tile home-tile--primary" data-nav="capture">
+          <span class="home-tile__icon">📷</span>
+          <span>Nova coleta</span>
+        </button>
+        <button class="home-tile" data-nav="history">
+          <span class="home-tile__icon">🔎</span>
+          <span>Buscar / Histórico</span>
+        </button>
+        <button class="home-tile" data-nav="dashboard">
+          <span class="home-tile__icon">📊</span>
+          <span>Dashboard</span>
+        </button>
+      </div>
+      <p class="pending-banner" id="pending-banner" hidden></p>
+    </section>
+
+    <!-- ===================== TELA: CAPTURA ===================== -->
+    <section class="screen" id="screen-capture" hidden>
+      <div class="capture-box">
+        <p class="hint">Fotografe a folha de produção com boa luz, sem sombra sobre o texto.</p>
+        <label class="capture-input" for="capture-file">
+          <span class="capture-input__icon">📷</span>
+          <span>Tocar para fotografar</span>
+          <input type="file" id="capture-file" accept="image/*" capture="environment" hidden />
+        </label>
+        <img id="capture-preview" class="capture-preview" hidden alt="Pré-visualização da foto" />
+        <div id="capture-status" class="capture-status" hidden></div>
+      </div>
+    </section>
+
+    <!-- ===================== TELA: CONFERÊNCIA / CORREÇÃO ===================== -->
+    <section class="screen" id="screen-review" hidden>
+      <div class="review-photo-wrap">
+        <img id="review-photo" alt="Foto da folha de produção" />
+      </div>
+      <p class="hint hint--warning" id="review-source-note"></p>
+      <form id="form-review" class="review-form"><!-- campos gerados via JS (review.js) --></form>
+      <p class="form-error" id="review-error" hidden></p>
+      <div class="review-actions">
+        <button type="button" class="btn btn--ghost" id="btn-review-cancel">Descartar</button>
+        <button type="submit" form="form-review" class="btn btn--primary">Confirmar e salvar</button>
+      </div>
+    </section>
+
+    <!-- ===================== TELA: HISTÓRICO / BUSCA ===================== -->
+    <section class="screen" id="screen-history" hidden>
+      <div class="search-bar">
+        <input type="search" id="history-search" placeholder="Buscar por Nº OP, item, setor..." />
+      </div>
+      <div class="filter-row">
+        <label>De <input type="date" id="history-from" /></label>
+        <label>Até <input type="date" id="history-to" /></label>
+        <button class="btn btn--ghost btn--small" id="btn-export-csv">Exportar CSV</button>
+      </div>
+      <ul class="op-list" id="history-list"></ul>
+      <p class="empty-state" id="history-empty" hidden>Nenhuma OP encontrada com esses filtros.</p>
+      <button class="btn btn--ghost btn--block" id="btn-history-more" hidden>Carregar mais</button>
+    </section>
+
+    <!-- ===================== TELA: DETALHE DE UMA OP ===================== -->
+    <section class="screen" id="screen-op-detail" hidden>
+      <div id="op-detail-content"></div>
+    </section>
+
+    <!-- ===================== TELA: DASHBOARD ===================== -->
+    <section class="screen" id="screen-dashboard" hidden>
+      <div class="kpi-grid" id="dashboard-kpis"></div>
+      <h2 class="section-title">Setores mais coletados (últimos 7 dias)</h2>
+      <ul class="bar-list" id="dashboard-setores"></ul>
+      <h2 class="section-title">Pendentes de revisão (confiança baixa)</h2>
+      <ul class="op-list" id="dashboard-pendentes"></ul>
+    </section>
+
+  </main>
+
+  <!-- ===================== NAVEGAÇÃO INFERIOR ===================== -->
+  <nav class="bottom-nav" id="bottom-nav" hidden>
+    <button data-nav="home" class="bottom-nav__item is-active">Início</button>
+    <button data-nav="capture" class="bottom-nav__item">Coletar</button>
+    <button data-nav="history" class="bottom-nav__item">Histórico</button>
+    <button data-nav="dashboard" class="bottom-nav__item">Dashboard</button>
+  </nav>
+
+  <div id="toast" class="toast" hidden></div>
+
+  <!-- Supabase JS via CDN — sem build step. Versão fixada para estabilidade. -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <!-- Tesseract.js via CDN — OCR local, roda no navegador do usuário. -->
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
