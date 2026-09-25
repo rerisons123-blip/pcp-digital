@@ -12,11 +12,11 @@
  *   como secret dentro do Cloudflare Worker.
  */
 export const CONFIG = {
-  SUPABASE_URL: 'https://SEU-PROJETO.supabase.co',
-  SUPABASE_ANON_KEY: 'SUA_ANON_KEY_PUBLICA',
+  SUPABASE_URL: 'https://qagyjyvddmvnqnivnezv.supabase.co',
+  SUPABASE_ANON_KEY: 'sb_publishable_XaxPpkvBstPFH9yvA3VX-w_LyvpPhJ3',
 
-  AI_FALLBACK_URL: 'https://pcp-digital-ai-fallback.SEU-USUARIO.workers.dev',
-  AI_FALLBACK_SHARED_SECRET: 'MESMO_VALOR_DEFINIDO_NO_WORKER',
+  AI_FALLBACK_URL: 'https://pcp-digital-ai.rerisons123.workers.dev',
+  AI_FALLBACK_SHARED_SECRET: '49e5e46e791a8b6f9ab99c396ab1d995bb6f5187dc6232f3fc2a56d2368e472e',
 
   // Abaixo do limiar (0–1), o app aciona o fallback de IA. Ver docs/ARCHITECTURE.md, seção 2.
   OCR_CONFIDENCE_THRESHOLD: 0.6,
